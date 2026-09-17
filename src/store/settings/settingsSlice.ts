@@ -1,8 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { settingsActions } from './settingsActions';
+import { extractDomain, buildWebSocketUrl } from './settingsUtils';
 import * as RootNavigation from '@/utils/navigationUtils';
 import { NotificationSettings } from './settingsTypes';
 import { Theme } from '@/types/common/Theme';
+import { URL_TYPE } from '@/constants/url';
+
+const envBaseUrl = process.env.EXPO_PUBLIC_CHATWOOT_BASE_URL;
+export const DEFAULT_BASE_URL = envBaseUrl ? extractDomain({ url: envBaseUrl }) : 'app.chatwoot.com';
 
 interface SettingsState {
   baseUrl: string;
@@ -20,8 +25,8 @@ interface SettingsState {
   pushToken: string;
 }
 const initialState: SettingsState = {
-  baseUrl: 'app.chatwoot.com',
-  installationUrl: 'https://app.chatwoot.com/',
+  baseUrl: DEFAULT_BASE_URL,
+  installationUrl: `${URL_TYPE}${DEFAULT_BASE_URL}/`,
   uiFlags: {
     isSettingUrl: false,
     isUpdating: false,
@@ -37,7 +42,7 @@ const initialState: SettingsState = {
     selected_push_flags: [],
     user_id: 0,
   },
-  webSocketUrl: 'wss://app.chatwoot.com/cable',
+  webSocketUrl: buildWebSocketUrl(DEFAULT_BASE_URL),
   theme: 'system',
   version: '',
   pushToken: '',

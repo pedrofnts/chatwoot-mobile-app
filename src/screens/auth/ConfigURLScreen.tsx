@@ -10,7 +10,7 @@ import { tailwind } from '@/theme';
 import i18n from '@/i18n';
 import { useAppSelector, useAppDispatch } from '@/hooks';
 import { selectBaseUrl } from '@/store/settings/settingsSelectors';
-import { resetSettings } from '@/store/settings/settingsSlice';
+import { resetSettings, DEFAULT_BASE_URL } from '@/store/settings/settingsSlice';
 import { settingsActions } from '@/store/settings/settingsActions';
 
 type FormData = {
@@ -30,7 +30,7 @@ const ConfigURLScreen = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      url: baseUrl ? baseUrl : appName === 'Chatwoot' ? 'app.chatwoot.com' : '',
+      url: baseUrl ? baseUrl : appName === 'Chatwoot' ? DEFAULT_BASE_URL : '',
     },
   });
 
