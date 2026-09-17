@@ -75,12 +75,15 @@
   "CONVERSATION": {
     "HEADER": {
       "TITLE": "Conversations",
+      "MINE_TITLE": "My Conversations",
+      "ALL_INBOXES": "All inboxes",
       "CLEAR_FILTER": "Clear"
     },
     "FILTERS": {
       "AGENT": {
         "SEARCH_AGENT": "Search agents"
       },
+      "UNREAD": "Unread",
       "INBOX": {
         "TITLE": "Filter by inbox"
       },

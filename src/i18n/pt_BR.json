@@ -53,12 +53,15 @@
   "CONVERSATION": {
     "HEADER": {
       "TITLE": "Conversas",
+      "MINE_TITLE": "Minhas Conversas",
+      "ALL_INBOXES": "Todas as caixas",
       "CLEAR_FILTER": "Limpar"
     },
     "FILTERS": {
       "AGENT": {
         "SEARCH_AGENT": "Pesquisar agentes"
       },
+      "UNREAD": "Não lidas",
       "INBOX": {
         "TITLE": "Filtrar por caixa de entrada"
       },
@@ -83,7 +86,7 @@
       "ASSIGNEE_TYPE": {
         "TITLE": "Filtrar por tipo de responsável",
         "OPTIONS": {
-          "ME": "Eu",
+          "ME": "Minhas",
           "UNASSIGNED": "Não atribuídas",
           "ALL": "Todas"
         }

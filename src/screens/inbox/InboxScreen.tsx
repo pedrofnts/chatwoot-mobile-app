@@ -14,6 +14,7 @@ import {
   selectIsLoadingNotifications,
   getFilteredNotifications,
 } from '@/store/notification/notificationSelectors';
+import { useNavigation } from '@react-navigation/native';
 import { InboxHeader, InboxItemContainer } from './components';
 import { useInboxListStateContext } from '@/context';
 import { resetNotifications } from '@/store/notification/notificationSlice';
@@ -162,6 +163,7 @@ const InboxList = () => {
 
 const InboxScreen = () => {
   const dispatch = useAppDispatch();
+  const navigation = useNavigation();
 
   // Memoize the markAllAsRead callback
   const markAllAsRead = useCallback(async () => {
@@ -171,6 +173,10 @@ const InboxScreen = () => {
     });
   }, [dispatch]);
 
+  const handleBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
   return (
     <SafeAreaView edges={['top']} style={tailwind.style('flex-1 bg-white')}>
       <StatusBar
@@ -179,7 +185,7 @@ const InboxScreen = () => {
         barStyle={'dark-content'}
       />
       <InboxListStateProvider>
-        <InboxHeader markAllAsRead={markAllAsRead} />
+        <InboxHeader markAllAsRead={markAllAsRead} onBack={handleBack} />
         <InboxList />
       </InboxListStateProvider>
     </SafeAreaView>

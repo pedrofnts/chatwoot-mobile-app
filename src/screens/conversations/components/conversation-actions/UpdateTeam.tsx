@@ -101,10 +101,7 @@ export const UpdateTeam = () => {
 
   return (
     <React.Fragment>
-      <SearchBar
-        onChangeText={handleChangeText}
-        placeholder={i18n.t('CONVERSATION.SEARCH_TEAM')}
-      />
+      <SearchBar onChangeText={handleChangeText} placeholder={i18n.t('CONVERSATION.SEARCH_TEAM')} />
       <TeamStack teams={teams} teamId={teamId} />
     </React.Fragment>
   );

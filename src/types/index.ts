@@ -47,7 +47,12 @@ export interface AttributeListType {
  * The types of Filter for Conversation List
  */
 
-export type ConversationFilterOptions = 'assignee_type' | 'status' | 'sort_by' | 'inbox_id';
+export type ConversationFilterOptions =
+  | 'assignee_type'
+  | 'status'
+  | 'sort_by'
+  | 'inbox_id'
+  | 'read_status';
 
 // Defining the specific options for each filter type
 export type AssigneeFilterOptions = Record<AssigneeTypes, string>;

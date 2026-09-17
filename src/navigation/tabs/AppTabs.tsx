@@ -20,10 +20,11 @@ import { selectWebSocketUrl } from '@/store/settings/settingsSelectors';
 import { getUserPermissions } from '@/utils/permissionUtils';
 import { CONVERSATION_PERMISSIONS } from 'constants/permissions';
 
-import { AuthStack, ConversationStack, SettingsStack, InboxStack } from '../stack';
+import { AuthStack, ConversationStack, MineConversationStack, SettingsStack } from '../stack';
 import ChatScreen from '@/screens/chat-screen/ChatScreen';
 import ContactDetailsScreen from '@/screens/contact-details/ContactDetailsScreen';
 import DashboardScreen from '@/screens/dashboard/DashboardScreen';
+import InboxScreen from '@/screens/inbox/InboxScreen';
 import SearchScreen from '@/screens/search/SearchScreen';
 
 import { selectInstallationUrl } from '@/store/settings/settingsSelectors';
@@ -33,6 +34,7 @@ import { selectChatwootVersion } from '@/store/settings/settingsSelectors';
 import { checkServerSupport } from '@/utils/serverUtils';
 import { inboxActions } from '@/store/inbox/inboxActions';
 import { labelActions } from '@/store/label/labelActions';
+import { notificationActions } from '@/store/notification/notificationAction';
 import actionCableConnector from '@/utils/actionCable';
 import { setCurrentState } from '@/store/conversation/conversationHeaderSlice';
 import AnalyticsHelper from '@/utils/analyticsUtils';
@@ -44,14 +46,13 @@ import { clearSelection } from '@/store/conversation/conversationSelectedSlice';
 const Tab = createBottomTabNavigator();
 
 export type TabParamList = {
+  MineConversations: undefined;
   Conversations: undefined;
-  Inbox: undefined;
   Settings: undefined;
   Login: undefined;
   ConfigInstallationURL: undefined;
   ForgotPassword: undefined;
   Search: undefined;
-  Notifications: undefined;
 };
 
 export type TabBarExcludedScreenParamList = {
@@ -70,6 +71,7 @@ export type TabBarExcludedScreenParamList = {
   ImageScreen: undefined;
   ConversationDetails: undefined;
   ConversationAction: undefined;
+  Notifications: undefined;
 };
 const Stack = createNativeStackNavigator<TabBarExcludedScreenParamList>();
 
@@ -94,6 +96,8 @@ const Tabs = () => {
     dispatch(inboxActions.fetchInboxes());
     initActionCable();
     dispatch(labelActions.fetchLabels());
+    // Seeds the unread count for the notification bell badge in the header.
+    dispatch(notificationActions.fetchNotifications({ page: 1, sort_order: 'desc' }));
     dispatch(setCurrentState('none'));
     dispatch(clearSelection());
     dispatch(dashboardAppActions.index());
@@ -176,14 +180,20 @@ const Tabs = () => {
   }, []);
 
   return (
-    <Tab.Navigator tabBar={CustomTabBar} initialRouteName="Inbox">
+    <Tab.Navigator tabBar={CustomTabBar} initialRouteName="MineConversations">
       {hasConversationPermission && (
-        <Tab.Screen name="Inbox" component={InboxStack} options={{ headerShown: false }} />
+        <Tab.Screen
+          name="MineConversations"
+          // unmountOnBlur keeps a single conversation list mounted at a time, so
+          // the mine/team screens never race over the shared conversation store.
+          options={{ headerShown: false, unmountOnBlur: true }}
+          component={MineConversationStack}
+        />
       )}
       {hasConversationPermission && (
         <Tab.Screen
           name="Conversations"
-          options={{ headerShown: false }}
+          options={{ headerShown: false, unmountOnBlur: true }}
           component={ConversationStack}
         />
       )}
@@ -224,6 +234,11 @@ export const AppTabs = () => {
           options={{ headerShown: false, animation: 'slide_from_right' }}
           name="SearchScreen"
           component={SearchScreen}
+        />
+        <Stack.Screen
+          options={{ headerShown: false, animation: 'slide_from_right' }}
+          name="Notifications"
+          component={InboxScreen}
         />
       </Stack.Navigator>
     );

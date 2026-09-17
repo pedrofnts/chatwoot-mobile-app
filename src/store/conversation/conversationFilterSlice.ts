@@ -11,6 +11,9 @@ export const defaultFilterState: FilterState = {
   status: 'open',
   sort_by: 'latest',
   inbox_id: '0',
+  // 'all' | 'unread' — client-side only, the list API has no read-state param.
+  // May be undefined in state persisted before this key existed.
+  read_status: 'all',
 };
 
 interface ConversationFilterState {

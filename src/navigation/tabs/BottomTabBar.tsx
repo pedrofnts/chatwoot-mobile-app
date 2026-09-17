@@ -15,10 +15,10 @@ import { selectCurrentState } from '@/store/conversation/conversationHeaderSlice
 import {
   ConversationIconFilled,
   ConversationIconOutline,
-  InboxIconFilled,
-  InboxIconOutline,
   SettingsIconFilled,
   SettingsIconOutline,
+  TeamConversationIconFilled,
+  TeamConversationIconOutline,
 } from '@/svg-icons';
 import { tailwind } from '@/theme';
 import { useHaptic, useScaleAnimation, useTabBarHeight } from '@/utils';
@@ -36,10 +36,10 @@ type TabBarIconsProps = {
 
 const TabBarIcons = ({ focused, route }: TabBarIconsProps) => {
   switch (route.name) {
-    case 'Conversations':
+    case 'MineConversations':
       return focused ? <ConversationIconFilled /> : <ConversationIconOutline />;
-    case 'Inbox':
-      return focused ? <InboxIconFilled /> : <InboxIconOutline />;
+    case 'Conversations':
+      return focused ? <TeamConversationIconFilled /> : <TeamConversationIconOutline />;
     case 'Settings':
       return focused ? <SettingsIconFilled /> : <SettingsIconOutline />;
   }

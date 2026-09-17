@@ -8,6 +8,7 @@ const meta: Meta<typeof InboxHeader> = {
   component: InboxHeader,
   args: {
     markAllAsRead: () => {},
+    onBack: () => {},
   },
   decorators: [
     Story => (
@@ -40,7 +41,7 @@ export const AllVariants: Story = {
     <ScrollView contentContainerStyle={tailwind.style('flex gap-4 pt-4')}>
       <Title title="Default State" />
       <HeaderContainer>
-        <InboxHeader markAllAsRead={() => {}} />
+        <InboxHeader markAllAsRead={() => {}} onBack={() => {}} />
       </HeaderContainer>
     </ScrollView>
   ),

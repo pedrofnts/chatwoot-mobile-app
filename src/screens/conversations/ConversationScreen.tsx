@@ -10,7 +10,7 @@ import {
   StatusFilters,
   SortByFilters,
   InboxFilters,
-  AssigneeTypeFilters,
+  AssigneeTabs,
 } from './components';
 
 import { ActionTabs } from '@/components-next';
@@ -29,16 +29,26 @@ import { Conversation } from '@/types';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import {
   selectBottomSheetState,
+  selectCurrentState,
   setBottomSheetState,
 } from '@/store/conversation/conversationHeaderSlice';
 import { resetActionState } from '@/store/conversation/conversationActionSlice';
+import { useRoute, RouteProp } from '@react-navigation/native';
+import type {
+  ConversationScope,
+  ConversationStackParamList,
+} from '@/navigation/stack/ConversationStack';
 import { conversationActions } from '@/store/conversation/conversationActions';
 import {
   selectConversationsLoading,
   selectIsAllConversationsFetched,
   getFilteredConversations,
 } from '@/store/conversation/conversationSelectors';
-import { selectFilters, FilterState } from '@/store/conversation/conversationFilterSlice';
+import {
+  selectFilters,
+  setFilters,
+  FilterState,
+} from '@/store/conversation/conversationFilterSlice';
 import { ConversationPayload } from '@/store/conversation/conversationTypes';
 import { clearAllConversations } from '@/store/conversation/conversationSlice';
 import { selectUserId, selectCurrentUserAccountId } from '@/store/auth/authSelectors';
@@ -247,10 +257,39 @@ const ConversationList = () => {
 };
 
 const ConversationScreen = () => {
+  const route = useRoute<RouteProp<ConversationStackParamList, 'ConversationScreen'>>();
+  const scope: ConversationScope = route.params?.scope ?? 'team';
+
   const currentBottomSheet = useAppSelector(selectBottomSheetState);
+  const currentHeaderState = useAppSelector(selectCurrentState);
+  const filters = useAppSelector(selectFilters);
   const dispatch = useAppDispatch();
 
   const { filtersModalSheetRef } = useRefsContext();
+
+  // The mine/team bottom tabs share the persisted filter state, so the filters
+  // scoped by this screen are realigned before the list mounts (the tabs
+  // unmount on blur, so only one screen ever runs this). The team tab has no
+  // unread control, so a leftover unread read-state is also cleared there.
+  const needsScopeSync =
+    scope === 'me'
+      ? filters.assignee_type !== 'me'
+      : filters.assignee_type === 'me' || filters.read_status === 'unread';
+
+  useEffect(() => {
+    if (!needsScopeSync) return;
+    if (scope === 'me') {
+      dispatch(setFilters({ key: 'assignee_type', value: 'me' }));
+      return;
+    }
+    if (filters.assignee_type === 'me') {
+      dispatch(setFilters({ key: 'assignee_type', value: 'all' }));
+    }
+    if (filters.read_status === 'unread') {
+      dispatch(setFilters({ key: 'read_status', value: 'all' }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [needsScopeSync, scope, dispatch]);
 
   const handleOnDismiss = () => {
     /**
@@ -269,12 +308,13 @@ const ConversationScreen = () => {
         return 290;
       case 'sort_by':
         return 200;
-      case 'assignee_type':
-        return 200;
       default:
         return 250;
     }
   })();
+
+  // The assignee tabs get out of the way while conversations are being multi-selected.
+  const showAssigneeTabs = currentHeaderState !== 'Select';
 
   return (
     <SafeAreaView edges={['top']} style={tailwind.style('flex-1 bg-white')}>
@@ -284,11 +324,22 @@ const ConversationScreen = () => {
         barStyle={'dark-content'}
       />
       <ConversationListStateProvider>
-        <ConversationHeader />
+        <ConversationHeader scope={scope} />
+        {showAssigneeTabs ? (
+          <Animated.View layout={LinearTransition.springify().damping(22).stiffness(180)}>
+            <AssigneeTabs scope={scope} />
+          </Animated.View>
+        ) : null}
         <Animated.View
           style={tailwind.style('flex-1')}
           layout={LinearTransition.springify().damping(22).stiffness(180)}>
-          <ConversationList />
+          {needsScopeSync ? (
+            <Animated.View style={tailwind.style('flex-1 items-center justify-center')}>
+              <ActivityIndicator />
+            </Animated.View>
+          ) : (
+            <ConversationList />
+          )}
         </Animated.View>
         <Sheet
           ref={filtersModalSheetRef}
@@ -302,7 +353,6 @@ const ConversationScreen = () => {
             <>
               {currentBottomSheet === 'status' ? <StatusFilters /> : null}
               {currentBottomSheet === 'sort_by' ? <SortByFilters /> : null}
-              {currentBottomSheet === 'assignee_type' ? <AssigneeTypeFilters /> : null}
             </>
           )}
         </Sheet>

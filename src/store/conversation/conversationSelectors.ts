@@ -20,6 +20,8 @@ export const selectConversationsLoading = createSelector(
   state => state.isLoadingConversations,
 );
 
+export const selectConversationMeta = createSelector(selectConversationsState, state => state.meta);
+
 export const selectConversationError = createSelector(
   selectConversationsState,
   state => state.error,
@@ -88,9 +90,16 @@ export const getFilteredConversations = createDraftSafeSelector(
 
     // Ids can outlive their record, so entries without one are dropped before
     // sorting. The copy keeps the sort off the memoized input array.
-    const sortedConversations = [...conversations]
+    let sortedConversations = [...conversations]
       .filter(Boolean)
       .sort(comparator[sortType as keyof SortComparator]);
+
+    // Read state is filtered client-side only — the list API has no such param.
+    if (filters.read_status === 'unread') {
+      sortedConversations = sortedConversations.filter(
+        conversation => conversation.unreadCount > 0,
+      );
+    }
 
     if (assigneeType === 'me') {
       return sortedConversations.filter(conversation => {

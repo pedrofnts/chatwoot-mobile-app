@@ -8,11 +8,16 @@ const meta: Meta<typeof ConversationHeaderPresenter> = {
   component: ConversationHeaderPresenter,
   args: {
     currentState: 'none',
+    scope: 'team',
+    inboxName: 'All inboxes',
     isSelectedAll: false,
     filtersAppliedCount: 0,
+    unreadNotificationCount: 0,
     onLeftIconPress: () => {},
     onRightIconPress: () => {},
     onClearFilter: () => {},
+    onNotificationPress: () => {},
+    onInboxPress: () => {},
   },
   argTypes: {
     currentState: {
@@ -60,71 +65,101 @@ export const AllVariants: Story = {
       <Title title="Select All" />
       <HeaderContainer>
         <ConversationHeaderPresenter
+          scope="team"
+          inboxName="All inboxes"
+          onInboxPress={() => {}}
+          unreadNotificationCount={0}
           currentState="Select"
           isSelectedAll={false}
           filtersAppliedCount={0}
           onLeftIconPress={() => {}}
           onRightIconPress={() => {}}
           onClearFilter={() => {}}
+          onNotificationPress={() => {}}
         />
       </HeaderContainer>
       <Title title="Selected All" />
       <HeaderContainer>
         <ConversationHeaderPresenter
+          scope="team"
+          inboxName="All inboxes"
+          onInboxPress={() => {}}
+          unreadNotificationCount={0}
           currentState="Select"
           isSelectedAll={true}
           filtersAppliedCount={0}
           onLeftIconPress={() => {}}
           onRightIconPress={() => {}}
           onClearFilter={() => {}}
+          onNotificationPress={() => {}}
         />
       </HeaderContainer>
 
       <Title title="Filter" />
       <HeaderContainer>
         <ConversationHeaderPresenter
+          scope="team"
+          inboxName="All inboxes"
+          onInboxPress={() => {}}
+          unreadNotificationCount={0}
           currentState="Filter"
           isSelectedAll={false}
           filtersAppliedCount={2}
           onLeftIconPress={() => {}}
           onRightIconPress={() => {}}
           onClearFilter={() => {}}
+          onNotificationPress={() => {}}
         />
       </HeaderContainer>
 
       <Title title="Filter Empty" />
       <HeaderContainer>
         <ConversationHeaderPresenter
+          scope="team"
+          inboxName="All inboxes"
+          onInboxPress={() => {}}
+          unreadNotificationCount={0}
           currentState="Filter"
           isSelectedAll={false}
           filtersAppliedCount={0}
           onLeftIconPress={() => {}}
           onRightIconPress={() => {}}
           onClearFilter={() => {}}
+          onNotificationPress={() => {}}
         />
       </HeaderContainer>
 
       <Title title="Filter Applied" />
       <HeaderContainer>
         <ConversationHeaderPresenter
+          scope="team"
+          inboxName="All inboxes"
+          onInboxPress={() => {}}
+          unreadNotificationCount={0}
           currentState="Filter"
           isSelectedAll={false}
           filtersAppliedCount={2}
           onLeftIconPress={() => {}}
           onRightIconPress={() => {}}
           onClearFilter={() => {}}
+          onNotificationPress={() => {}}
         />
       </HeaderContainer>
 
       <Title title="Filter Applied with out state" />
       <HeaderContainer>
         <ConversationHeaderPresenter
+          scope="team"
+          inboxName="All inboxes"
+          onInboxPress={() => {}}
+          unreadNotificationCount={0}
           currentState="none"
           isSelectedAll={false}
           filtersAppliedCount={2}
           onLeftIconPress={() => {}}
           onRightIconPress={() => {}}
           onClearFilter={() => {}}
+          onNotificationPress={() => {}}
         />
       </HeaderContainer>
     </ScrollView>
