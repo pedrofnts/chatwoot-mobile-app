@@ -66,6 +66,12 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         },
       ],
     },
+    updates: {
+      url: `https://u.expo.dev/${process.env.EXPO_PUBLIC_PROJECT_ID}`,
+    },
+    runtimeVersion: {
+      policy: 'appVersion',
+    },
     extra: {
       eas: {
         projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
