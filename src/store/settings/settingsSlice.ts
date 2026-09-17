@@ -7,7 +7,9 @@ import { Theme } from '@/types/common/Theme';
 import { URL_TYPE } from '@/constants/url';
 
 const envBaseUrl = process.env.EXPO_PUBLIC_CHATWOOT_BASE_URL;
-export const DEFAULT_BASE_URL = envBaseUrl ? extractDomain({ url: envBaseUrl }) : 'app.chatwoot.com';
+export const DEFAULT_BASE_URL = envBaseUrl
+  ? extractDomain({ url: envBaseUrl })
+  : 'app.chatwoot.com';
 
 interface SettingsState {
   baseUrl: string;
@@ -32,7 +34,7 @@ const initialState: SettingsState = {
     isUpdating: false,
     isLocaleSet: false,
   },
-  localeValue: 'en',
+  localeValue: 'pt_BR',
   notificationSettings: {
     account_id: 0,
     all_email_flags: [],

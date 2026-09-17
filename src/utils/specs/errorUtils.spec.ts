@@ -1,6 +1,11 @@
 import { errorMessage } from '@/utils/errorUtils';
+import i18n from '@/i18n';
 
 describe('#errorMessage', () => {
+  beforeAll(() => {
+    i18n.locale = 'en';
+  });
+
   it('returns the message of an Error', () => {
     expect(errorMessage(new Error('No app associated with this mime type'))).toBe(
       'No app associated with this mime type',
