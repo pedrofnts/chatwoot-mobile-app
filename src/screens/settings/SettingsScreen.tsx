@@ -15,8 +15,6 @@ import { switchAccount } from '@/utils/accountUtils';
 
 import { RecentSearches } from '@/screens/search/utils/recentSearches';
 import i18n from 'i18n';
-import { HELP_URL } from '@/constants/url';
-import { openURL } from '@/utils/urlUtils';
 import { tailwind } from '@/theme';
 
 import {
@@ -173,10 +171,6 @@ const SettingsScreen = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeLocale]);
 
-  const openHelpCenter = () => {
-    openURL({ URL: HELP_URL });
-  };
-
   // const openSystemSettings = () => {
   //   if (Platform.OS === 'ios') {
   //     Linking.openURL('app-settings:');
@@ -234,14 +228,6 @@ const SettingsScreen = () => {
   ];
 
   const supportList: GenericListType[] = [
-    {
-      hasChevron: true,
-      title: i18n.t('SETTINGS.READ_DOCS'),
-      icon: <SwitchIcon />,
-      subtitle: '',
-      subtitleType: 'light',
-      onPressListItem: openHelpCenter,
-    },
     {
       hasChevron: true,
       title: i18n.t('SETTINGS.CHAT_WITH_US'),
@@ -339,7 +325,7 @@ const SettingsScreen = () => {
         !!showWidget && (
           <ChatWootWidget
             websiteToken={process.env.EXPO_PUBLIC_CHATWOOT_WEBSITE_TOKEN}
-            locale="en"
+            locale={activeLocale}
             baseUrl={process.env.EXPO_PUBLIC_CHATWOOT_BASE_URL}
             closeModal={() => toggleWidget(false)}
             isModalVisible={showWidget}

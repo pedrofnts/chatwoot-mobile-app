@@ -12,6 +12,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'br.app.izzy.chat',
+      appleTeamId: process.env.EXPO_APPLE_TEAM_ID,
       infoPlist: {
         NSCameraUsageDescription:
           'This app requires access to the camera to upload images and videos.',
@@ -71,7 +72,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         storybookEnabled: process.env.EXPO_STORYBOOK_ENABLED,
       },
     },
-    owner: 'chatwoot',
+    owner: 'seujeitoizzy',
     plugins: [
       'expo-font',
       'expo-image',
