@@ -2,8 +2,8 @@ import { ConfigContext, ExpoConfig } from 'expo/config';
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   return {
-    name: 'Chatwoot',
-    slug: process.env.EXPO_PUBLIC_APP_SLUG || 'chatwoot-mobile',
+    name: 'Izzy',
+    slug: process.env.EXPO_PUBLIC_APP_SLUG || 'izzy-chat',
     version: '4.9.4',
     orientation: 'portrait',
     icon: './assets/icon.png',
