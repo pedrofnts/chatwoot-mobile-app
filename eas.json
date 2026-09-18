@@ -15,6 +15,9 @@
   },
   "submit": {
     "production": {
+      "ios": {
+        "ascAppId": "6813192063"
+      },
       "android": {
         "track": "internal" // (enum: production, beta, alpha, internal)
       }
