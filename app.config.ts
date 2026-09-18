@@ -19,9 +19,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         NSPhotoLibraryUsageDescription:
           'This app requires access to the photo library to upload images.',
         NSMicrophoneUsageDescription: 'This app requires access to the microphone to record audio.',
-        NSAppleMusicUsageDescription:
-          'This app does not use Apple Music, but a system API may require this permission.',
-        UIBackgroundModes: ['fetch', 'remote-notification'],
+        UIBackgroundModes: ['remote-notification'],
         ITSAppUsesNonExemptEncryption: false,
       },
       // Please use the relative path to the google-services.json file
@@ -94,7 +92,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       ],
       [
         'react-native-permissions',
-        { iosPermissions: ['Camera', 'PhotoLibrary', 'MediaLibrary', 'Notifications'] },
+        { iosPermissions: ['Camera', 'PhotoLibrary', 'Notifications'] },
       ],
       [
         '@sentry/react-native',

@@ -433,7 +433,7 @@
     "OfFLINE": "Você precisa se conectar ao Wi-Fi ou a uma rede celular para ficar online novamente",
     "CANNOT_FETCH": "Ocorreu um erro ao buscar as informações, por favor, tente novamente",
     "AUTH": "Nome de usuário / senha incorreta. Por favor, tente novamente",
-    "NO_ACCOUNTS_MESSAGE": "Você não tem acesso a nenhuma conta no chatwoot"
+    "NO_ACCOUNTS_MESSAGE": "Você não tem acesso a nenhuma conta na Izzy"
   },
   "SUCCESS": {
     "AUTH": "Acesso bem sucedido"

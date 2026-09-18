@@ -277,7 +277,7 @@ const SettingsScreen = () => {
         </Animated.View>
         <Pressable
           style={tailwind.style('p-4 items-center')}
-          onLongPress={() => debugActionsSheetRef.current?.present()}>
+          onLongPress={__DEV__ ? () => debugActionsSheetRef.current?.present() : undefined}>
           <Text style={tailwind.style('text-sm text-gray-700 ')}>
             {`${appName} ${appVersionDetails}`}
           </Text>
@@ -300,18 +300,22 @@ const SettingsScreen = () => {
         <BottomSheetHeader headerText={i18n.t('SETTINGS.NOTIFICATION_PREFERENCES')} />
         <NotificationPreferences />
       </Sheet>
-      <Sheet ref={switchAccountSheetRef} detents={[0.5]}>
-        <BottomSheetHeader headerText={i18n.t('SETTINGS.SWITCH_ACCOUNT')} />
-        <SwitchAccount
-          currentAccountId={activeAccountId}
-          changeAccount={changeAccount}
-          accounts={accounts}
-        />
+      <Sheet ref={switchAccountSheetRef} detents={[0.5]} scrollable>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <BottomSheetHeader headerText={i18n.t('SETTINGS.SWITCH_ACCOUNT')} />
+          <SwitchAccount
+            currentAccountId={activeAccountId}
+            changeAccount={changeAccount}
+            accounts={accounts}
+          />
+        </ScrollView>
       </Sheet>
-      <Sheet ref={debugActionsSheetRef} detents={[0.36]}>
-        <BottomSheetHeader headerText={i18n.t('SETTINGS.DEBUG_ACTIONS')} />
-        <DebugActions />
-      </Sheet>
+      {__DEV__ && (
+        <Sheet ref={debugActionsSheetRef} detents={[0.36]}>
+          <BottomSheetHeader headerText={i18n.t('SETTINGS.DEBUG_ACTIONS')} />
+          <DebugActions />
+        </Sheet>
+      )}
       {!!process.env.EXPO_PUBLIC_CHATWOOT_WEBSITE_TOKEN &&
         !!process.env.EXPO_PUBLIC_CHATWOOT_BASE_URL &&
         !!showWidget && (
