@@ -8,7 +8,7 @@ import { FileIcon } from '@/svg-icons';
 import { tailwind } from '@/theme';
 import { Icon } from '@/components-next/common';
 import { Spinner } from '@/components-next/spinner';
-import { MESSAGE_VARIANTS } from '@/constants';
+import { DARK_BUBBLE_VARIANTS, MESSAGE_VARIANTS } from '@/constants';
 import { errorMessage } from '@/utils/errorUtils';
 
 const generateUniqueFileName = (url: string, originalFileName: string) => {
@@ -33,6 +33,7 @@ type FilePreviewProps = Pick<FileBubbleProps, 'fileSrc'> & {
 
 export const FileBubblePreview = (props: FilePreviewProps) => {
   const { fileSrc, isComposed = false, variant } = props;
+  const onDarkBubble = DARK_BUBBLE_VARIANTS.includes(variant);
   const dirs = ReactNativeBlobUtil.fs.dirs;
 
   const [fileDownload, setFileDownload] = useState(false);
@@ -81,11 +82,7 @@ export const FileBubblePreview = (props: FilePreviewProps) => {
         <Animated.View style={tailwind.style('pr-1.5')}>
           <Spinner
             size={20}
-            stroke={
-              variant === MESSAGE_VARIANTS.USER
-                ? tailwind.color('text-white')
-                : tailwind.color('bg-blue-800')
-            }
+            stroke={onDarkBubble ? tailwind.color('text-white') : tailwind.color('bg-blue-800')}
           />
         </Animated.View>
       ) : (
@@ -94,11 +91,7 @@ export const FileBubblePreview = (props: FilePreviewProps) => {
             size={24}
             icon={
               <FileIcon
-                fill={
-                  variant === MESSAGE_VARIANTS.USER
-                    ? tailwind.color('bg-white')
-                    : tailwind.color('text-blue-800')
-                }
+                fill={onDarkBubble ? tailwind.color('bg-white') : tailwind.color('text-blue-800')}
               />
             }
           />
@@ -112,12 +105,12 @@ export const FileBubblePreview = (props: FilePreviewProps) => {
             style={[
               tailwind.style(
                 isComposed ? 'max-w-[248px]' : 'max-w-[170px]',
-                variant === MESSAGE_VARIANTS.USER || variant === MESSAGE_VARIANTS.AGENT
+                onDarkBubble || variant === MESSAGE_VARIANTS.USER
                   ? 'text-base tracking-[0.32px] leading-[22px] font-inter-normal-20'
                   : '',
-                variant === MESSAGE_VARIANTS.USER
+                onDarkBubble
                   ? 'text-white'
-                  : variant === MESSAGE_VARIANTS.AGENT
+                  : variant === MESSAGE_VARIANTS.USER
                     ? 'text-gray-700'
                     : '',
               ),
@@ -129,8 +122,8 @@ export const FileBubblePreview = (props: FilePreviewProps) => {
             style={[
               tailwind.style(
                 'border-b-[1px] absolute left-0 right-0 ios:bottom-[1px] android:bottom-0',
-                variant === MESSAGE_VARIANTS.USER ? 'border-white' : '',
-                variant === MESSAGE_VARIANTS.AGENT ? 'border-blue-800' : '',
+                onDarkBubble ? 'border-white' : '',
+                variant === MESSAGE_VARIANTS.USER ? 'border-blue-800' : '',
               ),
             ]}
           />

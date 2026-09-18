@@ -323,5 +323,14 @@ export const MESSAGE_VARIANTS = {
   UNSUPPORTED: 'unsupported',
 };
 
+// Variants rendered on a solid dark bubble (brand blue / ruby), whose foreground
+// elements must therefore be white-based to keep contrast.
+export const DARK_BUBBLE_VARIANTS: string[] = [
+  MESSAGE_VARIANTS.AGENT,
+  MESSAGE_VARIANTS.BOT,
+  MESSAGE_VARIANTS.TEMPLATE,
+  MESSAGE_VARIANTS.ERROR,
+];
+
 export const LAST_ACTIVE_TIMESTAMP_KEY = 'lastActiveTimestamp';
 export const LAST_ACTIVE_TIMESTAMP_THRESHOLD = 1000 * 60 * 1; // 1 minute

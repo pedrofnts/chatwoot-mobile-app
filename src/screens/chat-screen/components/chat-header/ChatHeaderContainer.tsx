@@ -16,6 +16,8 @@ import { evaluateSLAStatus } from '@chatwoot/utils';
 import { resetSentMessage } from '@/store/conversation/sendMessageSlice';
 import { selectAllDashboardApps } from '@/store/dashboard-app/dashboardAppSlice';
 import { selectUser } from '@/store/auth/authSelectors';
+import { selectInboxById } from '@/store/inbox/inboxSelectors';
+import { selectAllLabels } from '@/store/label/labelSelectors';
 
 type ChatScreenHeaderProps = {
   name: string;
@@ -23,6 +25,15 @@ type ChatScreenHeaderProps = {
 };
 
 const REFRESH_INTERVAL = 60000;
+
+// Formats Brazilian numbers as "+55 (11) 91234-5678"; other numbers pass through untouched.
+const formatPhoneNumber = (phoneNumber: string) => {
+  const brMatch = phoneNumber.match(/^\+55(\d{2})(\d{4,5})(\d{4})$/);
+  if (brMatch) {
+    return `+55 (${brMatch[1]}) ${brMatch[2]}-${brMatch[3]}`;
+  }
+  return phoneNumber;
+};
 
 export const ChatHeaderContainer = (props: ChatScreenHeaderProps) => {
   const { name, imageSrc } = props;
@@ -32,6 +43,25 @@ export const ChatHeaderContainer = (props: ChatScreenHeaderProps) => {
   const conversation = useAppSelector(state => selectConversationById(state, conversationId));
   const currentUser = useAppSelector(selectUser);
   const dashboardApps = useAppSelector(selectAllDashboardApps);
+  const inbox = useAppSelector(state =>
+    conversation?.inboxId ? selectInboxById(state, conversation.inboxId) : undefined,
+  );
+  const allLabels = useAppSelector(selectAllLabels);
+
+  // Contact phone number (formatted) shown under the name, with the inbox as a chip beside it.
+  const phoneNumber = conversation?.meta?.sender?.phoneNumber;
+  const subtitle = phoneNumber ? formatPhoneNumber(phoneNumber) : '';
+  const inboxName = inbox?.name || '';
+
+  // Conversation labels are plain titles; colors come from the account label list.
+  const labels = useMemo(
+    () =>
+      (conversation?.labels || []).map(title => ({
+        title,
+        color: allLabels.find(label => label.title === title)?.color,
+      })),
+    [conversation?.labels, allLabels],
+  );
 
   const appliedSla = conversation?.appliedSla;
 
@@ -163,6 +193,9 @@ export const ChatHeaderContainer = (props: ChatScreenHeaderProps) => {
       name={name}
       imageSrc={imageSrc}
       isResolved={isResolved}
+      subtitle={subtitle}
+      inboxName={inboxName}
+      labels={labels}
       dashboardsList={dashboardsList}
       isSlaMissed={slaStatus?.isSlaMissed}
       hasSla={!!appliedSla}

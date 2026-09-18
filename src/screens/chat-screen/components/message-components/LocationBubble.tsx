@@ -5,7 +5,7 @@ import Animated from 'react-native-reanimated';
 import { tailwind } from '@/theme';
 import { Icon } from '@/components-next/common';
 
-import { MESSAGE_VARIANTS } from '@/constants';
+import { DARK_BUBBLE_VARIANTS } from '@/constants';
 import { MapIcon } from '@/svg-icons';
 import { openURL } from '@/utils/urlUtils';
 
@@ -26,11 +26,8 @@ export const LocationBubble: React.FC<LocationBubbleProps> = props => {
       <Text
         onPress={() => openURL({ URL: mapUrl })}
         style={tailwind.style(
-          variant === MESSAGE_VARIANTS.USER
-            ? 'text-base tracking-[0.32px] leading-[22px] font-inter-normal-20 underline'
-            : '',
-          variant === MESSAGE_VARIANTS.USER ? 'text-white' : '',
-          variant === MESSAGE_VARIANTS.AGENT ? 'text-gray-950' : '',
+          'text-base tracking-[0.32px] leading-[22px] font-inter-normal-20 underline',
+          DARK_BUBBLE_VARIANTS.includes(variant) ? 'text-white' : 'text-gray-950',
         )}>
         See on map
       </Text>

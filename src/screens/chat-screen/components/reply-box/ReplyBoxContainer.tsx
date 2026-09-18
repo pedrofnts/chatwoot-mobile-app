@@ -69,22 +69,17 @@ import { getLastEmailInSelectedChat } from '@/store/conversation/conversationSel
 import { selectAssignableParticipantsByInboxId } from '@/store/assignable-agent/assignableAgentSelectors';
 import { AudioRecorder } from '../audio-recorder/AudioRecorder';
 import { VoiceRecordButton } from './buttons/VoiceRecordButton';
-import { CopilotButton } from './buttons/CopilotButton';
-import { CopilotMenu } from '../copilot/CopilotMenu';
 import { CopilotEditorSection } from '../copilot/CopilotEditorSection';
 import { CopilotInputBar } from '../copilot/CopilotInputBar';
-import { ToneSelectionSheet } from '../copilot/ToneSelectionSheet';
 import {
   selectIsCopilotActive,
   selectIsGenerating,
   selectGeneratedContent,
   selectOriginalContent,
   selectFollowUpContext,
-  setOriginalContent,
   resetCopilot,
 } from '@/store/copilot/copilotSlice';
-import { executeCopilotAction, sendCopilotFollowUp } from '@/store/copilot/copilotActions';
-import type { CopilotActionKey } from '@/types/Copilot';
+import { sendCopilotFollowUp } from '@/store/copilot/copilotActions';
 
 const SHEET_APPEAR_SPRING_CONFIG = {
   damping: 20,
@@ -121,7 +116,6 @@ const BottomSheetContent = () => {
     conversationId,
     isVoiceRecorderOpen,
     setIsVoiceRecorderOpen,
-    isCopilotMenuOpen,
     setIsCopilotMenuOpen,
   } = useChatWindowContext();
 
@@ -255,49 +249,6 @@ const BottomSheetContent = () => {
     }
   };
 
-  const handleToggleCopilotMenu = () => {
-    hapticSelection?.();
-    if (isCopilotMenuOpen) {
-      setIsCopilotMenuOpen(false);
-    } else {
-      Keyboard.dismiss();
-      setAddMenuOptionSheetState(false);
-      setIsCopilotMenuOpen(true);
-    }
-  };
-
-  const handleCopilotAction = (actionKey: CopilotActionKey) => {
-    setIsCopilotMenuOpen(false);
-    copilotAbortRef.current?.abort();
-    dispatch(setOriginalContent(messageContent));
-    const promise = dispatch(
-      executeCopilotAction({ actionKey, content: messageContent, conversationId }),
-    );
-    copilotAbortRef.current = promise;
-    promise.unwrap().catch((err: { name?: string }) => {
-      if (err?.name === 'AbortError') return;
-      showToast({ message: i18n.t('COPILOT.GENERATION_FAILED') });
-    });
-  };
-
-  const handleCopilotChangeTone = () => {
-    toneSelectionSheetRef.current?.present();
-  };
-
-  const handleToneSelected = (tone: CopilotActionKey) => {
-    setIsCopilotMenuOpen(false);
-    copilotAbortRef.current?.abort();
-    dispatch(setOriginalContent(messageContent));
-    const promise = dispatch(
-      executeCopilotAction({ actionKey: tone, content: messageContent, conversationId }),
-    );
-    copilotAbortRef.current = promise;
-    promise.unwrap().catch((err: { name?: string }) => {
-      if (err?.name === 'AbortError') return;
-      showToast({ message: i18n.t('COPILOT.GENERATION_FAILED') });
-    });
-  };
-
   const handleCopilotAccept = () => {
     dispatch(setMessageContent(generatedContent));
     dispatch(resetCopilot());
@@ -312,9 +263,7 @@ const BottomSheetContent = () => {
   const handleCopilotFollowUp = (message: string) => {
     if (followUpContext && message.trim().length > 0) {
       copilotAbortRef.current?.abort();
-      const promise = dispatch(
-        sendCopilotFollowUp({ followUpContext, message, conversationId }),
-      );
+      const promise = dispatch(sendCopilotFollowUp({ followUpContext, message, conversationId }));
       copilotAbortRef.current = promise;
       promise.unwrap().catch((err: { name?: string }) => {
         if (err?.name === 'AbortError') return;
@@ -513,7 +462,11 @@ const BottomSheetContent = () => {
       )}
 
       <Animated.View
-        layout={isCopilotActive ? undefined : LinearTransition.springify().mass(1).damping(29).stiffness(140)}
+        layout={
+          isCopilotActive
+            ? undefined
+            : LinearTransition.springify().mass(1).damping(29).stiffness(140)
+        }
         style={tailwind.style(
           `pb-2 border-t-[1px] border-t-blackA-A3 ${shouldShowReplyHeader ? 'pt-0' : 'pt-2'}`,
         )}>
@@ -551,7 +504,11 @@ const BottomSheetContent = () => {
         ) : null}
         {!isVoiceRecorderOpen ? (
           <Animated.View
-            layout={isCopilotActive ? undefined : LinearTransition.springify().mass(1).damping(15).stiffness(105)}
+            layout={
+              isCopilotActive
+                ? undefined
+                : LinearTransition.springify().mass(1).damping(15).stiffness(105)
+            }
             style={tailwind.style('flex flex-row px-1 items-end z-20 relative')}>
             {!isCopilotActive && attachmentsLength === 0 && shouldShowFileUpload && (
               <AddCommandButton
@@ -559,12 +516,6 @@ const BottomSheetContent = () => {
                 derivedAddMenuOptionStateValue={derivedAddMenuOptionStateValue}
               />
             )}
-            <CopilotButton
-              isActive={isCopilotMenuOpen || isCopilotActive}
-              isThinking={isGenerating}
-              onPress={isCopilotActive ? undefined : handleToggleCopilotMenu}
-              disabled={isCopilotActive}
-            />
             {isCopilotActive ? (
               <>
                 <CopilotInputBar
@@ -595,14 +546,6 @@ const BottomSheetContent = () => {
                 ) : null}
               </>
             )}
-            {isCopilotMenuOpen && (
-              <CopilotMenu
-                editorContent={messageContent}
-                editorMode={replyEditorMode}
-                onSelectAction={handleCopilotAction}
-                onSelectChangeTone={handleCopilotChangeTone}
-              />
-            )}
           </Animated.View>
         ) : null}
       </Animated.View>
@@ -612,8 +555,6 @@ const BottomSheetContent = () => {
       ) : !isCopilotActive && attachmentsLength > 0 ? (
         <AttachedMedia />
       ) : null}
-
-      <ToneSelectionSheet ref={toneSelectionSheetRef} onSelectTone={handleToneSelected} />
     </AnimatedKeyboardStickyView>
   );
 };

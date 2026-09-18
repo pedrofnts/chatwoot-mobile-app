@@ -16,7 +16,7 @@ import { FileErrorIcon } from '@/svg-icons';
 import i18n from '@/i18n';
 import { Spinner } from '@/components-next/spinner';
 import { pausePlayer, resumePlayer, seekTo, startPlayer, stopPlayer } from '../audio-recorder';
-import { MESSAGE_VARIANTS } from '@/constants';
+import { DARK_BUBBLE_VARIANTS } from '@/constants';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/hooks';
 // eslint-disable-next-line import/no-unresolved
@@ -173,21 +173,23 @@ export const AudioBubblePlayer = React.memo((props: AudioPlayerProps) => {
     };
   }, [dispatch]);
 
+  const onDarkBubble = DARK_BUBBLE_VARIANTS.includes(variant);
+
   const sliderProps = useMemo(
     () => ({
-      trackColor: variant === MESSAGE_VARIANTS.USER ? 'bg-whiteA-A9' : 'bg-gray-500',
-      filledTrackColor: variant === MESSAGE_VARIANTS.USER ? 'bg-white' : 'bg-blue-700',
-      knobStyle: variant === MESSAGE_VARIANTS.USER ? 'border-blue-300' : 'border-blue-700',
+      trackColor: onDarkBubble ? 'bg-whiteA-A9' : 'bg-gray-500',
+      filledTrackColor: onDarkBubble ? 'bg-white' : 'bg-blue-700',
+      knobStyle: onDarkBubble ? 'border-blue-300' : 'border-blue-700',
       manualSeekTo,
       currentPosition,
       totalDuration,
       pauseAudio,
     }),
-    [variant, manualSeekTo, currentPosition, totalDuration, pauseAudio],
+    [onDarkBubble, manualSeekTo, currentPosition, totalDuration, pauseAudio],
   );
 
   if (hasConversionFailed) {
-    const failureColor = variant === MESSAGE_VARIANTS.USER ? 'text-white' : 'text-gray-900';
+    const failureColor = onDarkBubble ? 'text-white' : 'text-gray-900';
     // Tapping the failure row runs the preparation again.
     return (
       <Pressable
@@ -207,7 +209,7 @@ export const AudioBubblePlayer = React.memo((props: AudioPlayerProps) => {
       <Pressable disabled={isSoundLoading} hitSlop={10} onPress={togglePlayback}>
         {isSoundLoading ? (
           <Animated.View>
-            <Spinner size={13} stroke={variant === MESSAGE_VARIANTS.USER ? 'white' : 'black'} />
+            <Spinner size={13} stroke={onDarkBubble ? 'white' : 'black'} />
           </Animated.View>
         ) : isCurrentAudioSrcPlaying ? (
           <Animated.View
@@ -217,8 +219,8 @@ export const AudioBubblePlayer = React.memo((props: AudioPlayerProps) => {
             <Icon
               icon={
                 <PauseIcon
-                  fillOpacity={variant === MESSAGE_VARIANTS.USER ? '1' : '0.565'}
-                  fill={variant === MESSAGE_VARIANTS.USER ? 'white' : 'black'}
+                  fillOpacity={onDarkBubble ? '1' : '0.565'}
+                  fill={onDarkBubble ? 'white' : 'black'}
                 />
               }
               size={13}
@@ -230,8 +232,8 @@ export const AudioBubblePlayer = React.memo((props: AudioPlayerProps) => {
             entering={FadeIn}
             exiting={FadeOut}>
             <PlayIcon
-              fillOpacity={variant === MESSAGE_VARIANTS.USER ? '1' : '0.565'}
-              fill={variant === MESSAGE_VARIANTS.USER ? 'white' : 'black'}
+              fillOpacity={onDarkBubble ? '1' : '0.565'}
+              fill={onDarkBubble ? 'white' : 'black'}
             />
           </Animated.View>
         )}

@@ -15,13 +15,24 @@ type MarkdownBubbleProps = {
 };
 
 const variantTextMap = {
-  [MESSAGE_VARIANTS.AGENT]: 'text-gray-950',
-  [MESSAGE_VARIANTS.USER]: 'text-white',
-  [MESSAGE_VARIANTS.BOT]: 'text-gray-950',
-  [MESSAGE_VARIANTS.TEMPLATE]: 'text-gray-950',
+  [MESSAGE_VARIANTS.AGENT]: 'text-white',
+  [MESSAGE_VARIANTS.USER]: 'text-gray-950',
+  [MESSAGE_VARIANTS.BOT]: 'text-white',
+  [MESSAGE_VARIANTS.TEMPLATE]: 'text-white',
   [MESSAGE_VARIANTS.ERROR]: 'text-white',
   [MESSAGE_VARIANTS.PRIVATE]: 'text-amber-950 font-inter-medium-24',
   [MESSAGE_VARIANTS.EMAIL]: 'text-gray-950',
+};
+
+// Links need enough contrast against both the solid blue bubbles and the light ones.
+const variantLinkMap = {
+  [MESSAGE_VARIANTS.AGENT]: 'text-blue-100',
+  [MESSAGE_VARIANTS.BOT]: 'text-blue-100',
+  [MESSAGE_VARIANTS.TEMPLATE]: 'text-blue-100',
+  [MESSAGE_VARIANTS.ERROR]: 'text-white',
+  [MESSAGE_VARIANTS.USER]: 'text-blue-800',
+  [MESSAGE_VARIANTS.PRIVATE]: 'text-amber-900',
+  [MESSAGE_VARIANTS.EMAIL]: 'text-blue-800',
 };
 
 const handleURL = (url: string) => {
@@ -31,10 +42,15 @@ const handleURL = (url: string) => {
 
 const buildStyles = (variant: string) => {
   const textStyle = tailwind.style(variantTextMap[variant]);
+  const linkColor = tailwind.color(variantLinkMap[variant] || 'text-blue-800');
 
   return StyleSheet.create({
     body: {
       rowGap: 12,
+    },
+    link: {
+      color: linkColor,
+      textDecorationLine: 'underline',
     },
     text: {
       fontSize: 16,

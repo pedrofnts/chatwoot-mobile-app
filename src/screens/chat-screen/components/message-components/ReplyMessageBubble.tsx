@@ -9,20 +9,26 @@ import { Message } from '@/types';
 import { isMarkdown } from '@/utils';
 import { Icon } from '@/components-next';
 import { MarkdownBubble } from './MarkdownBubble';
-import { MESSAGE_VARIANTS, TEXT_MAX_WIDTH } from '@/constants';
+import { DARK_BUBBLE_VARIANTS, MESSAGE_VARIANTS, TEXT_MAX_WIDTH } from '@/constants';
 
 type ReplyMessageBubbleProps = {
   replyMessage: Message;
   variant: string;
 };
 
+// On the solid blue bubbles the quoted message gets a darker translucent panel
+// (WhatsApp-style); on the light contact bubble it gets a white panel.
 const variantBaseMap = {
-  [MESSAGE_VARIANTS.AGENT]: 'bg-white',
-  [MESSAGE_VARIANTS.USER]: 'bg-blackA-A7',
+  [MESSAGE_VARIANTS.AGENT]: 'bg-blackA-A6',
+  [MESSAGE_VARIANTS.BOT]: 'bg-blackA-A6',
+  [MESSAGE_VARIANTS.TEMPLATE]: 'bg-blackA-A6',
+  [MESSAGE_VARIANTS.ERROR]: 'bg-blackA-A6',
+  [MESSAGE_VARIANTS.USER]: 'bg-white',
 };
 
 export const ReplyMessageBubble = (props: ReplyMessageBubbleProps) => {
   const replyMessageItem = props.replyMessage as Message;
+  const isDarkQuote = DARK_BUBBLE_VARIANTS.includes(props.variant);
 
   const { setScrollToMessageId } = useChatWindowContext();
 
@@ -64,11 +70,17 @@ export const ReplyMessageBubble = (props: ReplyMessageBubbleProps) => {
         ),
       ]}>
       <Animated.View style={tailwind.style('flex flex-row')}>
-        <Animated.View style={tailwind.style('w-[3px] bg-gray-300 h-auto rounded-[4px]')} />
+        <Animated.View
+          style={tailwind.style(
+            'w-[3px] h-auto rounded-[4px]',
+            isDarkQuote ? 'bg-whiteA-A9' : 'bg-gray-300',
+          )}
+        />
         <Animated.View style={tailwind.style('pl-2.5')}>
           <Animated.Text
             style={tailwind.style(
-              'text-cxs font-inter-420-20 leading-[14.95px] tracking-[0.32px] text-blackA-A11',
+              'text-cxs font-inter-420-20 leading-[14.95px] tracking-[0.32px]',
+              isDarkQuote ? 'text-whiteA-A11' : 'text-blackA-A11',
             )}>
             Replying to {replyMessageItem?.sender?.name}
           </Animated.Text>
@@ -77,7 +89,8 @@ export const ReplyMessageBubble = (props: ReplyMessageBubbleProps) => {
               {renderAttachmentSection()}
               <Animated.Text
                 style={tailwind.style(
-                  'text-[14px] font-inter-normal-20 leading-[19.6px] tracking-[0.16px] text-gray-950 pl-1.5',
+                  'text-[14px] font-inter-normal-20 leading-[19.6px] tracking-[0.16px] pl-1.5',
+                  isDarkQuote ? 'text-white' : 'text-gray-950',
                 )}>
                 {replyMessageItem?.attachments[0].fileType}
               </Animated.Text>
@@ -94,7 +107,8 @@ export const ReplyMessageBubble = (props: ReplyMessageBubbleProps) => {
               <Animated.Text
                 numberOfLines={1}
                 style={tailwind.style(
-                  'text-[14px] font-inter-normal-20 leading-[19.6px] tracking-[0.16px] text-gray-950',
+                  'text-[14px] font-inter-normal-20 leading-[19.6px] tracking-[0.16px]',
+                  isDarkQuote ? 'text-white' : 'text-gray-950',
                 )}>
                 {replyMessageItem?.content}
               </Animated.Text>

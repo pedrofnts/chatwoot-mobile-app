@@ -30,6 +30,7 @@ export const DeliveryStatus = (props: DeliveryStatusProps) => {
     messageType,
     sourceId,
     deliveredColor,
+    readColor,
     sentColor,
     errorMessage,
   } = props;
@@ -93,7 +94,14 @@ export const DeliveryStatus = (props: DeliveryStatusProps) => {
     if (!shouldShowStatusIndicator) {
       return false;
     }
-    if (isAWhatsappChannel || isATwilioChannel || isAFacebookChannel || isASmsInbox || isAnInstagramChannel || isATiktokChannel) {
+    if (
+      isAWhatsappChannel ||
+      isATwilioChannel ||
+      isAFacebookChannel ||
+      isASmsInbox ||
+      isAnInstagramChannel ||
+      isATiktokChannel
+    ) {
       return sourceId && isDelivered;
     }
 
@@ -121,7 +129,13 @@ export const DeliveryStatus = (props: DeliveryStatusProps) => {
       return isRead;
     }
 
-    if (isAWhatsappChannel || isATwilioChannel || isAFacebookChannel || isAnInstagramChannel || isATiktokChannel) {
+    if (
+      isAWhatsappChannel ||
+      isATwilioChannel ||
+      isAFacebookChannel ||
+      isAnInstagramChannel ||
+      isATiktokChannel
+    ) {
       return sourceId && isRead;
     }
 
@@ -129,12 +143,16 @@ export const DeliveryStatus = (props: DeliveryStatusProps) => {
   };
 
   if (isPending) {
+    // Outgoing bubbles are solid blue, so the pending clock is white there;
+    // private notes (amber) and everything else keep the dark stroke.
     return (
       <Icon
         icon={
           <MessagePendingIcon
             stroke={
-              isOutgoing ? tailwind.color('text-blackA-A12') : tailwind.color('text-whiteA-A12')
+              isOutgoing && !isPrivate
+                ? tailwind.color('text-whiteA-A12')
+                : tailwind.color('text-blackA-A12')
             }
           />
         }
@@ -157,7 +175,9 @@ export const DeliveryStatus = (props: DeliveryStatusProps) => {
   if (showReadIndicator()) {
     return (
       <Icon
-        icon={<DoubleCheckIcon renderSecondTick stroke={tailwind.color('text-blue-800')} />}
+        icon={
+          <DoubleCheckIcon renderSecondTick stroke={tailwind.color(readColor || 'text-blue-800')} />
+        }
         size={14}
       />
     );
