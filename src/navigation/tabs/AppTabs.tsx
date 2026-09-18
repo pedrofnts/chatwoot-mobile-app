@@ -19,6 +19,7 @@ import { selectWebSocketUrl } from '@/store/settings/settingsSelectors';
 
 import { getUserPermissions } from '@/utils/permissionUtils';
 import { CONVERSATION_PERMISSIONS } from 'constants/permissions';
+import { useAssigneeTypeOptions } from '@/hooks/useAssigneeTypeOptions';
 
 import { AuthStack, ConversationStack, MineConversationStack, SettingsStack } from '../stack';
 import ChatScreen from '@/screens/chat-screen/ChatScreen';
@@ -165,6 +166,11 @@ const Tabs = () => {
     userPermissions.includes(permission),
   );
 
+  // The team tab only exists when the role can browse beyond its own
+  // conversations (unassigned/all views).
+  const assigneeTypeOptions = useAssigneeTypeOptions();
+  const hasTeamViews = assigneeTypeOptions.some(type => type !== 'me');
+
   const checkAppVersion = useCallback(async () => {
     if (chatwootVersion) {
       checkServerSupport({
@@ -190,7 +196,7 @@ const Tabs = () => {
           component={MineConversationStack}
         />
       )}
-      {hasConversationPermission && (
+      {hasConversationPermission && hasTeamViews && (
         <Tab.Screen
           name="Conversations"
           options={{ headerShown: false, unmountOnBlur: true }}

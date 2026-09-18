@@ -52,6 +52,7 @@ import {
 import { ConversationPayload } from '@/store/conversation/conversationTypes';
 import { clearAllConversations } from '@/store/conversation/conversationSlice';
 import { selectUserId, selectCurrentUserAccountId } from '@/store/auth/authSelectors';
+import { useAssigneeTypeOptions } from '@/hooks/useAssigneeTypeOptions';
 import { clearAllContacts } from '@/store/contact/contactSlice';
 import { clearAssignableAgents } from '@/store/assignable-agent/assignableAgentSlice';
 
@@ -271,10 +272,15 @@ const ConversationScreen = () => {
   // scoped by this screen are realigned before the list mounts (the tabs
   // unmount on blur, so only one screen ever runs this). The team tab has no
   // unread control, so a leftover unread read-state is also cleared there.
+  // A persisted team view the role no longer permits also falls back here.
+  const permittedTypes = useAssigneeTypeOptions();
+  const teamFallbackType = permittedTypes.includes('all') ? 'all' : 'unassigned';
+  const isTeamTypePermitted =
+    filters.assignee_type !== 'me' && (permittedTypes as string[]).includes(filters.assignee_type);
   const needsScopeSync =
     scope === 'me'
       ? filters.assignee_type !== 'me'
-      : filters.assignee_type === 'me' || filters.read_status === 'unread';
+      : !isTeamTypePermitted || filters.read_status === 'unread';
 
   useEffect(() => {
     if (!needsScopeSync) return;
@@ -282,8 +288,8 @@ const ConversationScreen = () => {
       dispatch(setFilters({ key: 'assignee_type', value: 'me' }));
       return;
     }
-    if (filters.assignee_type === 'me') {
-      dispatch(setFilters({ key: 'assignee_type', value: 'all' }));
+    if (!isTeamTypePermitted) {
+      dispatch(setFilters({ key: 'assignee_type', value: teamFallbackType }));
     }
     if (filters.read_status === 'unread') {
       dispatch(setFilters({ key: 'read_status', value: 'all' }));
